@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+
+{% block title %}Validation Results - IBM Bob May 2026 Hackathon Compliance Checker{% endblock %}
+
+{% block content %}
+<section class="results-section py-5">
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3 class="mt-4">Validating Your Submission...</h3>
+            <p class="text-muted">Checking all 8 red flags - This may take up to 60 seconds</p>
+        </div>
+
+        <!-- Results Content -->
+        <div id="resultsContent" class="d-none">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-3">Hackathon Submission Validation Results</h1>
+                <p class="text-muted">Submission ID: <code id="submissionId">{{ submission_id }}</code></p>
+                <p class="small text-danger"><i class="bi bi-clock-history me-2"></i>Deadline: May 3, 2026, 10:00 AM ET</p>
+            </div>
+
+            <!-- Overall Score Card -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body text-center p-5">
+                            <h3 class="mb-4">Hackathon Compliance Score</h3>
+                            
+                            <!-- Circular Progress -->
+                            <div class="circular-progress mx-auto mb-4" style="width: 200px; height: 200px;">
+                                <svg viewBox="0 0 200 200">
+                                    <circle cx="100" cy="100" r="90" fill="none" stroke="#e9ecef" stroke-width="20"/>
+                                    <circle id="progressCircle" cx="100" cy="100" r="90" fill="none" 
+                                            stroke="#0d6efd" stroke-width="20" stroke-linecap="round"
+                                            stroke-dasharray="565.48" stroke-dashoffset="565.48"
+                                            transform="rotate(-90 100 100)"/>
+                                    <text id="scoreText" x="100" y="110" text-anchor="middle" 
+                                          font-size="48" font-weight="bold" fill="#212529">0</text>
+                                </svg>
+                            </div>
+                            
+                            <div id="scoreStatus" class="mb-3">
+                                <span class="badge bg-secondary fs-6">Calculating...</span>
+                            </div>
+                            
+                            <div class="row text-center mt-4">
+                                <div class="col-6">
+                                    <h5 id="totalFiles" class="mb-0">-</h5>
+                                    <small class="text-muted">Files Scanned</small>
+                                </div>
+                                <div class="col-6">
+                                    <h5 id="totalIssues" class="mb-0">-</h5>
+                                    <small class="text-muted">Issues Found</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Red Flags Summary -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold mb-4">
+                        <i class="bi bi-flag text-danger me-2"></i>Red Flags Summary
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-3 col-6">
+                            <div class="alert alert-danger mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                                    <div>
+                                        <h3 id="criticalCount" class="mb-0">0</h3>
+                                        <small>Critical</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="alert alert-warning mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-circle-fill fs-3 me-3"></i>
+                                    <div>
+                                        <h3 id="highCount" class="mb-0">0</h3>
+                                        <small>High</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="alert alert-info mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-info-circle-fill fs-3 me-3"></i>
+                                    <div>
+                                        <h3 id="mediumCount" class="mb-0">0</h3>
+                                        <small>Medium</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="alert alert-secondary mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-dash-circle-fill fs-3 me-3"></i>
+                                    <div>
+                                        <h3 id="lowCount" class="mb-0">0</h3>
+                                        <small>Low</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold mb-4">
+                        <i class="bi bi-bar-chart text-primary me-2"></i>Category Breakdown
+                    </h4>
+                    <div id="categoriesContainer"></div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold mb-4">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>Recommendations
+                    </h4>
+                    <ul id="recommendationsList" class="list-unstyled"></ul>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <a href="#" id="downloadBtn" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-download me-2"></i>Download Report
+                </a>
+                <a href="/upload" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-arrow-repeat me-2"></i>Analyze Another
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// VERSION 2.0 - FIXED DATA STRUCTURE HANDLING - DO NOT CACHE
+const submissionId = '{{ submission_id }}';
+let pollInterval;
+
+// Fetch results
+async function fetchResults() {
+    try {
+        const response = await fetch(`/api/results/${submissionId}`);
+        const data = await response.json();
+        
+        if (data.status === 'completed') {
+            clearInterval(pollInterval);
+            displayResults(data);
+        } else if (data.status === 'processing') {
+            // Continue polling
+            console.log('Still processing...');
+        } else if (data.status === 'error') {
+            showError(data.message || 'An error occurred during analysis');
+        }
+    } catch (error) {
+        console.error('Error fetching results:', error);
+        showError('Failed to fetch results. Please try again.');
+    }
+}
+
+// Display results
+function displayResults(data) {
+    // Hide loading, show results
+    document.getElementById('loadingState').classList.add('d-none');
+    document.getElementById('resultsContent').classList.remove('d-none');
+    
+    // Get score (handle both score and overall_score fields)
+    const score = data.score || data.overall_score || 0;
+    
+    // Animate overall score
+    animateScore(score);
+    
+    // Update summary stats
+    document.getElementById('totalFiles').textContent = data.files_scanned || data.total_files || 0;
+    
+    // Calculate total issues from severity_counts or violations
+    let totalIssues = 0;
+    if (data.severity_counts) {
+        totalIssues = (data.severity_counts.high || 0) +
+                     (data.severity_counts.medium || 0) +
+                     (data.severity_counts.low || 0);
+    } else if (data.total_violations) {
+        totalIssues = data.total_violations;
+    }
+    document.getElementById('totalIssues').textContent = totalIssues;
+    
+    // Update red flags (handle both structures) - SAFE VERSION
+    const criticalCount = (data.severity_counts && data.severity_counts.critical) ||
+                         (data.red_flags && data.red_flags.critical) || 0;
+    const highCount = (data.severity_counts && data.severity_counts.high) ||
+                     (data.red_flags && data.red_flags.high) || 0;
+    const mediumCount = (data.severity_counts && data.severity_counts.medium) ||
+                       (data.red_flags && data.red_flags.medium) || 0;
+    const lowCount = (data.severity_counts && data.severity_counts.low) ||
+                    (data.red_flags && data.red_flags.low) || 0;
+    
+    document.getElementById('criticalCount').textContent = criticalCount;
+    document.getElementById('highCount').textContent = highCount;
+    document.getElementById('mediumCount').textContent = mediumCount;
+    document.getElementById('lowCount').textContent = lowCount;
+    
+    // Display categories (convert violations to categories if needed)
+    if (data.categories) {
+        displayCategories(data.categories);
+    } else if (data.detailed_analysis) {
+        displayDetailedAnalysis(data.detailed_analysis);
+    } else {
+        document.getElementById('categoriesContainer').innerHTML =
+            '<p class="text-muted">No detailed category breakdown available</p>';
+    }
+    
+    // Display recommendations
+    if (data.recommendations && data.recommendations.length > 0) {
+        displayRecommendations(data.recommendations);
+    } else {
+        document.getElementById('recommendationsList').innerHTML =
+            '<li class="text-muted">No specific recommendations at this time</li>';
+    }
+    
+    // Setup download button
+    document.getElementById('downloadBtn').href = `/api/download/${submissionId}`;
+}
+
+// Animate score
+function animateScore(targetScore) {
+    const scoreText = document.getElementById('scoreText');
+    const progressCircle = document.getElementById('progressCircle');
+    const scoreStatus = document.getElementById('scoreStatus');
+    const circumference = 565.48;
+    
+    let currentScore = 0;
+    const duration = 2000; // 2 seconds
+    const increment = targetScore / (duration / 16); // 60fps
+    
+    const animation = setInterval(() => {
+        currentScore += increment;
+        
+        if (currentScore >= targetScore) {
+            currentScore = targetScore;
+            clearInterval(animation);
+        }
+        
+        // Update text
+        scoreText.textContent = Math.round(currentScore);
+        
+        // Update circle
+        const offset = circumference - (currentScore / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        
+        // Update color based on score
+        if (currentScore >= 80) {
+            progressCircle.style.stroke = '#198754'; // success
+            scoreStatus.innerHTML = '<span class="badge bg-success fs-6">Excellent</span>';
+        } else if (currentScore >= 60) {
+            progressCircle.style.stroke = '#ffc107'; // warning
+            scoreStatus.innerHTML = '<span class="badge bg-warning fs-6">Good</span>';
+        } else {
+            progressCircle.style.stroke = '#dc3545'; // danger
+            scoreStatus.innerHTML = '<span class="badge bg-danger fs-6">Needs Improvement</span>';
+        }
+    }, 16);
+}
+
+// Display categories
+function displayCategories(categories) {
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+    
+    Object.entries(categories).forEach(([name, data], index) => {
+        const categoryHtml = `
+            <div class="category-item mb-4" style="animation: fadeInUp 0.5s ease ${index * 0.1}s both">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">${name}</h5>
+                    <span class="badge ${getScoreBadgeClass(data.score)} fs-6">${data.score}%</span>
+                </div>
+                <div class="progress mb-2" style="height: 25px;">
+                    <div class="progress-bar ${getScoreProgressClass(data.score)}" 
+                         role="progressbar" style="width: 0%" 
+                         data-target="${data.score}">
+                        ${data.score}%
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>${data.issues} issue${data.issues !== 1 ? 's' : ''} found</span>
+                    <a href="#" class="text-decoration-none" data-bs-toggle="collapse" 
+                       data-bs-target="#details-${index}">
+                        View Details <i class="bi bi-chevron-down"></i>
+                    </a>
+                </div>
+                <div id="details-${index}" class="collapse mt-3">
+                    <div class="card card-body bg-light">
+                        ${displayCategoryDetails(data.details)}
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += categoryHtml;
+    });
+    
+    // Animate progress bars
+    setTimeout(() => {
+        document.querySelectorAll('.progress-bar').forEach(bar => {
+            const target = bar.getAttribute('data-target');
+            bar.style.width = target + '%';
+        });
+    }, 100);
+}
+
+// Display detailed analysis (alternative format)
+function displayDetailedAnalysis(analysis) {
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+    
+    const categories = [
+        { name: 'Hardcoded Secrets', count: analysis.hardcoded_secrets || 0, icon: 'key' },
+        { name: 'SQL Injection Risks', count: analysis.sql_injection || 0, icon: 'shield-exclamation' },
+        { name: 'Missing Error Handling', count: analysis.missing_error_handling || 0, icon: 'exclamation-triangle' },
+        { name: 'Dangerous Functions', count: analysis.dangerous_functions || 0, icon: 'bug' },
+        { name: 'Long Functions', count: analysis.long_functions || 0, icon: 'code-slash' },
+        { name: 'Deep Nesting', count: analysis.deep_nesting || 0, icon: 'diagram-3' },
+        { name: 'TODO Comments', count: analysis.todo_comments || 0, icon: 'chat-left-text' },
+        { name: 'Unused Imports', count: analysis.unused_imports || 0, icon: 'file-earmark-x' }
+    ];
+    
+    categories.forEach((cat, index) => {
+        const score = cat.count === 0 ? 100 : Math.max(0, 100 - (cat.count * 10));
+        const categoryHtml = `
+            <div class="category-item mb-3" style="animation: fadeInUp 0.5s ease ${index * 0.1}s both">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">
+                        <i class="bi bi-${cat.icon} me-2"></i>${cat.name}
+                    </h6>
+                    <span class="badge ${getScoreBadgeClass(score)}">${cat.count} issue${cat.count !== 1 ? 's' : ''}</span>
+                </div>
+                <div class="progress" style="height: 20px;">
+                    <div class="progress-bar ${getScoreProgressClass(score)}"
+                         role="progressbar" style="width: 0%"
+                         data-target="${score}">
+                        ${score}%
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += categoryHtml;
+    });
+    
+    // Animate progress bars
+    setTimeout(() => {
+        document.querySelectorAll('.progress-bar').forEach(bar => {
+            const target = bar.getAttribute('data-target');
+            bar.style.width = target + '%';
+        });
+    }, 100);
+}
+
+// Display category details
+function displayCategoryDetails(details) {
+    if (!details || details.length === 0) {
+        return '<p class="text-muted mb-0">No issues found in this category</p>';
+    }
+    
+    return details.map(detail => `
+        <div class="d-flex align-items-start mb-2">
+            <span class="badge ${getSeverityBadgeClass(detail.severity)} me-2">${detail.severity}</span>
+            <div class="flex-grow-1">
+                <strong>${detail.type}</strong>
+                <br>
+                <small class="text-muted">
+                    <i class="bi bi-file-code"></i> ${detail.file}:${detail.line}
+                </small>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Display recommendations
+function displayRecommendations(recommendations) {
+    const list = document.getElementById('recommendationsList');
+    list.innerHTML = '';
+    
+    recommendations.forEach((rec, index) => {
+        const li = document.createElement('li');
+        li.className = 'mb-3';
+        li.style.animation = `fadeInUp 0.5s ease ${index * 0.1}s both`;
+        li.innerHTML = `
+            <div class="d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                <p class="mb-0">${rec}</p>
+            </div>
+        `;
+        list.appendChild(li);
+    });
+}
+
+// Helper functions
+function getScoreBadgeClass(score) {
+    if (score >= 80) return 'bg-success';
+    if (score >= 60) return 'bg-warning';
+    return 'bg-danger';
+}
+
+function getScoreProgressClass(score) {
+    if (score >= 80) return 'bg-success';
+    if (score >= 60) return 'bg-warning';
+    return 'bg-danger';
+}
+
+function getSeverityBadgeClass(severity) {
+    const classes = {
+        'critical': 'bg-danger',
+        'high': 'bg-warning',
+        'medium': 'bg-info',
+        'low': 'bg-secondary'
+    };
+    return classes[severity] || 'bg-secondary';
+}
+
+function showError(message) {
+    document.getElementById('loadingState').innerHTML = `
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            ${message}
+        </div>
+        <a href="/upload" class="btn btn-primary">Try Again</a>
+    `;
+}
+
+// Start polling for results
+fetchResults();
+pollInterval = setInterval(fetchResults, 2000); // Poll every 2 seconds
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .progress-bar {
+        transition: width 1s ease-in-out;
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

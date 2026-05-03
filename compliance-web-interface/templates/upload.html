@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Submission - IBM Bob May 2026 Hackathon Compliance Checker{% endblock %}
+
+{% block content %}
+<section class="upload-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-5 fw-bold mb-3">Upload Your Hackathon Submission</h1>
+                    <p class="lead text-muted">
+                        Upload your complete submission ZIP file for 8-point compliance validation
+                    </p>
+                    <p class="text-danger small">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Deadline: May 3, 2026, 10:00 AM ET
+                    </p>
+                </div>
+
+                <!-- Upload Form -->
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <!-- Drag and Drop Area -->
+                            <div id="dropZone" class="drop-zone text-center p-5 mb-4">
+                                <i class="bi bi-cloud-upload display-1 text-primary mb-3"></i>
+                                <h4 class="mb-3">Drag & Drop Your Submission ZIP Here</h4>
+                                <p class="text-muted mb-3">or</p>
+                                <label for="fileInput" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-folder2-open me-2"></i>Browse Files
+                                </label>
+                                <input type="file" id="fileInput" name="file" class="d-none" accept=".zip,.rar">
+                                <p class="text-muted small mt-3 mb-0">
+                                    <strong>Accepted:</strong> ZIP or RAR file containing code, docs, bob_sessions folder, and video link
+                                    <br>Maximum file size: 50MB | Validates all 8 red flags
+                                </p>
+                            </div>
+
+                            <!-- Selected File Info -->
+                            <div id="fileInfo" class="file-info d-none mb-4">
+                                <div class="alert alert-info d-flex align-items-center">
+                                    <i class="bi bi-file-earmark-zip fs-3 me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <strong id="fileName"></strong>
+                                        <br>
+                                        <small id="fileSize" class="text-muted"></small>
+                                    </div>
+                                    <button type="button" id="removeFile" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Analysis Option -->
+                            <div class="mb-4">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="advancedCheck" name="advanced" value="true">
+                                            <label class="form-check-label" for="advancedCheck">
+                                                <strong><i class="bi bi-stars text-warning me-2"></i>Enable Advanced Hackathon Compliance Analysis</strong>
+                                            </label>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Includes: bob_sessions validation, banned AI models detection, team roster check,
+                                            timestamp validation, video presence, deliverables check, and PI data scan (8 red flags)
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div id="progressContainer" class="progress-container d-none mb-4">
+                                <div class="progress" style="height: 30px;">
+                                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" style="width: 0%">
+                                        <span id="progressText">0%</span>
+                                    </div>
+                                </div>
+                                <p id="progressStatus" class="text-center text-muted mt-2 mb-0">Uploading...</p>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <span id="errorText"></span>
+                            </div>
+
+                            <!-- Success Message -->
+                            <div id="successMessage" class="alert alert-success d-none" role="alert">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <span id="successText"></span>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5" disabled>
+                                    <i class="bi bi-arrow-up-circle me-2"></i>Upload & Analyze
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="row mt-5 g-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-shield-check text-success fs-1 mb-3"></i>
+                                <h5 class="card-title">8 Red Flags</h5>
+                                <p class="card-text small text-muted">
+                                    Validates all 8 compliance requirements instantly
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-lightning-charge text-warning fs-1 mb-3"></i>
+                                <h5 class="card-title">Fast Validation</h5>
+                                <p class="card-text small text-muted">
+                                    Complete check in under 60 seconds
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-file-earmark-check text-danger fs-1 mb-3"></i>
+                                <h5 class="card-title">Pass/Fail Report</h5>
+                                <p class="card-text small text-muted">
+                                    Specific fixes needed before submission
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Upload functionality
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const fileInfo = document.getElementById('fileInfo');
+const fileName = document.getElementById('fileName');
+const fileSize = document.getElementById('fileSize');
+const removeFileBtn = document.getElementById('removeFile');
+const submitBtn = document.getElementById('submitBtn');
+const uploadForm = document.getElementById('uploadForm');
+const progressContainer = document.getElementById('progressContainer');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const progressStatus = document.getElementById('progressStatus');
+const errorMessage = document.getElementById('errorMessage');
+const errorText = document.getElementById('errorText');
+const successMessage = document.getElementById('successMessage');
+const successText = document.getElementById('successText');
+
+let selectedFile = null;
+
+// Drag and drop handlers
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('drag-over');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFileSelect(files[0]);
+    }
+});
+
+// File input change handler
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+    }
+});
+
+// Handle file selection
+function handleFileSelect(file) {
+    // Validate file size (50MB max)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+        showError('File size exceeds 50MB limit');
+        return;
+    }
+
+    // Validate file type
+    const allowedExtensions = ['.zip', '.rar', '.py', '.js', '.java', '.cpp', '.c', '.go', '.rb', '.php'];
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+        showError('File type not supported. Please upload: ' + allowedExtensions.join(', '));
+        return;
+    }
+
+    selectedFile = file;
+    
+    // Display file info
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+    fileInfo.classList.remove('d-none');
+    submitBtn.disabled = false;
+    
+    // Hide error message
+    errorMessage.classList.add('d-none');
+}
+
+// Remove file
+removeFileBtn.addEventListener('click', () => {
+    selectedFile = null;
+    fileInput.value = '';
+    fileInfo.classList.add('d-none');
+    submitBtn.disabled = true;
+    progressContainer.classList.add('d-none');
+    successMessage.classList.add('d-none');
+});
+
+// Form submission
+uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!selectedFile) {
+        showError('Please select a file to upload');
+        return;
+    }
+
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    
+    // Add advanced analysis flag
+    const advancedCheck = document.getElementById('advancedCheck');
+    if (advancedCheck && advancedCheck.checked) {
+        formData.append('advanced', 'true');
+    }
+
+    // Show progress bar
+    progressContainer.classList.remove('d-none');
+    submitBtn.disabled = true;
+    errorMessage.classList.add('d-none');
+    successMessage.classList.add('d-none');
+
+    try {
+        // Simulate upload progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 10;
+            if (progress <= 90) {
+                updateProgress(progress, 'Uploading...');
+            }
+        }, 200);
+
+        // Upload file
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        clearInterval(progressInterval);
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Upload failed');
+        }
+
+        const result = await response.json();
+        
+        // Complete progress
+        updateProgress(100, 'Upload complete!');
+        
+        // Show success message
+        setTimeout(() => {
+            successText.textContent = 'File uploaded successfully! Redirecting to results...';
+            successMessage.classList.remove('d-none');
+            
+            // Redirect to results page
+            setTimeout(() => {
+                window.location.href = `/results/${result.submission_id}`;
+            }, 1500);
+        }, 500);
+
+    } catch (error) {
+        progressContainer.classList.add('d-none');
+        showError(error.message);
+        submitBtn.disabled = false;
+    }
+});
+
+// Helper functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function updateProgress(percent, status) {
+    progressBar.style.width = percent + '%';
+    progressText.textContent = percent + '%';
+    progressStatus.textContent = status;
+}
+
+function showError(message) {
+    errorText.textContent = message;
+    errorMessage.classList.remove('d-none');
+}
+</script>
+{% endblock %}

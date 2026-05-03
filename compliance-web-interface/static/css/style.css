@@ -1,0 +1,554 @@
+/* ===================================
+   AI Compliance Evaluator - Custom Styles
+   =================================== */
+
+/* Root Variables */
+:root {
+    --primary-color: #0066cc;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --light-bg: #f8f9fa;
+    --dark-bg: #212529;
+}
+
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+}
+
+.nav-link.active {
+    font-weight: 600;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
+}
+
+/* Feature Cards */
+.feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+}
+
+/* Upload Page Styles */
+.drop-zone {
+    border: 3px dashed #0066cc;
+    border-radius: 15px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-zone:hover {
+    background-color: #e9ecef;
+    border-color: #004c99;
+}
+
+.drop-zone.drag-over {
+    background-color: #cfe2ff;
+    border-color: #0066cc;
+    border-style: solid;
+}
+
+.file-info {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Progress Bar */
+.progress {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Results Page Styles */
+.circular-progress {
+    position: relative;
+}
+
+.circular-progress svg {
+    transform: rotate(-90deg);
+}
+
+.circular-progress circle {
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.category-item {
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.category-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+}
+
+/* Footer */
+.footer {
+    margin-top: auto;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Loading Spinner */
+.spinner-border {
+    animation: spinner-border 0.75s linear infinite;
+}
+
+/* Tooltips */
+.tooltip {
+    font-size: 0.875rem;
+}
+
+/* Stats Section */
+.stat-item {
+    padding: 1rem;
+}
+
+.stat-item h2 {
+    margin-bottom: 0.5rem;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Collapse Transitions */
+.collapse {
+    transition: height 0.3s ease;
+}
+
+/* Code Blocks */
+code {
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* ===================================
+   MOBILE RESPONSIVE STYLES
+   =================================== */
+
+/* Tablets and below (768px) */
+@media (max-width: 768px) {
+    /* Typography */
+    .display-3 {
+        font-size: 2.5rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .display-5 {
+        font-size: 1.75rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        min-height: 300px;
+        padding: 2rem 0;
+    }
+    
+    /* Navigation */
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .navbar-collapse {
+        background-color: rgba(0, 102, 204, 0.95);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-top: 1rem;
+    }
+    
+    /* Feature Cards */
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    /* Upload Zone */
+    .drop-zone {
+        padding: 2rem 1rem !important;
+    }
+    
+    .drop-zone i {
+        font-size: 3rem !important;
+    }
+    
+    .drop-zone h4 {
+        font-size: 1.25rem;
+    }
+    
+    /* Buttons */
+    .btn-lg {
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    /* Cards */
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    /* Results Page */
+    .circular-progress {
+        width: 150px !important;
+        height: 150px !important;
+    }
+    
+    .circular-progress text {
+        font-size: 36px !important;
+    }
+    
+    /* Stats */
+    .stat-item h2 {
+        font-size: 2rem;
+    }
+    
+    /* Spacing */
+    .py-5 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 2rem !important;
+    }
+    
+    .mt-5 {
+        margin-top: 2rem !important;
+    }
+}
+
+/* Mobile phones (576px and below) */
+@media (max-width: 576px) {
+    /* Typography */
+    .display-3 {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 1.75rem;
+    }
+    
+    .display-5 {
+        font-size: 1.5rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    h4 {
+        font-size: 1.1rem;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        min-height: 250px;
+    }
+    
+    /* Buttons */
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Upload Zone */
+    .drop-zone {
+        padding: 1.5rem 0.5rem !important;
+    }
+    
+    .drop-zone i {
+        font-size: 2.5rem !important;
+    }
+    
+    /* Cards */
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    /* Results Page */
+    .circular-progress {
+        width: 120px !important;
+        height: 120px !important;
+    }
+    
+    .circular-progress text {
+        font-size: 28px !important;
+    }
+    
+    /* Red Flags Summary */
+    .alert h3 {
+        font-size: 1.5rem;
+    }
+    
+    .alert small {
+        font-size: 0.75rem;
+    }
+    
+    /* Stats */
+    .stat-item h2 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.85rem;
+    }
+    
+    /* Footer */
+    .footer {
+        font-size: 0.85rem;
+        padding: 1.5rem 0 !important;
+    }
+    
+    /* Spacing */
+    .py-5 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+    
+    .p-5 {
+        padding: 1.5rem !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Navigation */
+    .navbar-brand i {
+        display: none;
+    }
+}
+
+/* Large screens (1200px and above) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Extra large screens (1400px and above) */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .footer,
+    .btn,
+    #downloadBtn {
+        display: none;
+    }
+    
+    .card {
+        border: 1px solid #dee2e6 !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Accessibility */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus Styles for Accessibility */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 3px solid #0066cc;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000;
+    }
+    
+    .btn {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    /* Uncomment to enable dark mode
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    .card {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .drop-zone {
+        background-color: #2d2d2d;
+        border-color: #0066cc;
+    }
+    */
+}
+
+/* Made with Bob */
